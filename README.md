@@ -18,4 +18,5 @@ A Streamlit app for predicting diabetes using the Pima Indians Diabetes Dataset.
 - Model performance metrics
 
 ## Deployment
-Deployed on Streamlit Cloud: [Link to app](#)
+
+Deployed on Streamlit Cloud: [[Link to app](https://diabetic-prediction-5bavcfdyiuxj8mdnwewsk9.streamlit.app/)](#)
