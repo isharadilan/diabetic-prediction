@@ -7,123 +7,87 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 import os
 
-# --- Set page config for a wider layout and cleaner look ---
+
 st.set_page_config(
     page_title="Diabetes Prediction App",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- Custom CSS for modern styling ---
-# We use st.markdown with unsafe_allow_html=True to inject CSS.
-# This gives us full control over the app's appearance.
-st.markdown(
-    """
-    <style>
-    /* General body styling for a clean, light theme */
-    .stApp {
-        background-color: #f0f2f6;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+# Theme-aware CSS
+st.markdown("""
+<style>
 
-    /* Style the sidebar for a more integrated feel */
-    .st-emotion-cache-16txte5 {
-        background-color: #ffffff;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    .st-emotion-cache-16txte5 h2 {
-        color: #333333;
-        font-weight: 600;
-        border-bottom: 2px solid #e0e0e0;
-        padding-bottom: 0.5rem;
-    }
+/* ===== Global Background & Text Colors ===== */
+[data-theme="light"] .stApp {
+    background-color: #f0f2f6 !important;
+    color: #1a1a1a !important;
+}
 
-    /* Main app container styling */
-    .main .block-container {
-        padding-top: 2rem;
-        padding-right: 2rem;
-        padding-left: 2rem;
-        padding-bottom: 2rem;
-    }
+[data-theme="dark"] .stApp {
+    background-color: #0e1117 !important;
+    color: #f0f0f0 !important;
+}
 
-    /* Main Title Styling */
-    h1 {
-        color: #1a1a1a;
-        text-align: left;
-        font-weight: 800;
-        font-size: 2.5rem;
-    }
-    
-    /* Header Styling */
-    h2, h3 {
-        color: #4CAF50;
-        font-weight: 600;
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 0.5rem;
-        margin-top: 2rem;
-    }
+/* ===== Sidebar Styling ===== */
+[data-testid="stSidebar"] {
+    padding-top: 1rem;
+}
 
-    /* Markdown Styling */
-    .st-emotion-cache-1g8i73 {
-        color: #555555;
-        font-size: 1.1rem;
-    }
-    
-    /* Styling for buttons with rounded corners and hover effect */
-    .st-emotion-cache-l33f8h {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    .st-emotion-cache-l33f8h:hover {
-        background-color: #45a049;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* Style for input widgets (sliders, number inputs) */
-    .stSlider > label, .stNumberInput > label {
-        font-weight: 500;
-        color: #333333;
-    }
+[data-theme="light"] [data-testid="stSidebar"] {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+}
 
-    /* Style the dataframes for better readability */
-    .stDataFrame > div {
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-    
-    /* Style plotly charts for a cleaner look */
-    .st-emotion-cache-16x881k {
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 1rem;
-    }
-    
-    /* Fix for matplotlib figures to have a background */
-    .st-emotion-cache-f1g0i0 img {
-        background-color: #ffffff;
-        padding: 1rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+[data-theme="dark"] [data-testid="stSidebar"] {
+    background-color: #262730 !important;
+    color: #f0f0f0 !important;
+}
 
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+/* ===== Buttons ===== */
+.stButton>button {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    border: none;
+}
+
+[data-theme="light"] .stButton>button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+[data-theme="dark"] .stButton>button {
+    background-color: #6fbf73;
+    color: black;
+}
+
+/* ===== Titles & Headers ===== */
+h1, h2, h3, h4 {
+    font-weight: 600;
+}
+
+[data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3 {
+    color: #1a1a1a !important;
+}
+
+[data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3 {
+    color: #f0f0f0 !important;
+}
+
+/* ===== Table Styling ===== */
+[data-theme="light"] .stDataFrame {
+    background-color: white;
+}
+
+[data-theme="dark"] .stDataFrame {
+    background-color: #1c1e24;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
 
 # --- Verify current directory (Good practice, keep it) ---
 st.write("Current Directory:", os.getcwd())
@@ -266,4 +230,5 @@ elif page == "Model Performance":
     cm = confusion_matrix(y, y_pred)
     fig, ax = plt.subplots()
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax)
+
     st.pyplot(fig)
